@@ -13,7 +13,6 @@ def fromRecv(byteString):
     dataLength, = unpack_from("H", header, 10)
     fmt = str(dataLength) + "s"
     payload = str(byteString[16:])
-    print(payload)
     SYNflag = False
     ACKflag = False
     FINflag = False
@@ -31,7 +30,6 @@ class Packet:
 
     def __init__(self, streamID, SYNNumber, ACKNumber, SYNflag, ACKflag, FINflag, window, dataLength, payload):
         self.streamID = streamID
-        print(self.streamID)
         self.SYNNumber = SYNNumber
         self.ACKNumber = ACKNumber
         self.flags = 0

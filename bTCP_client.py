@@ -31,9 +31,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #sock.sendto(createPacket(), (destination_ip, destination_port))
 
 
-def handshake():
+def handshake(ID):
     #Step 1
-    ID = random.getrandbits(32)
     print(ID)
     packet = Packet(ID, 0, 0, True, False, False, args.window, 0, "")
     sock.sendto(packet.getPacket(), (destination_ip, destination_port))
@@ -51,4 +50,39 @@ def handshake():
         print("Step 2 failed")
         return False
 
-handshake()
+def termination_client(ID, SYN, ACK):
+    #Step 1
+    packet = Packet(ID, SYN, ACK, False, False, True, args.window, 0, "")
+    sock.sendto(packet.getPacket(), (destination_ip, destination_port))
+    #Step 2
+    packet2 = fromRecv(sock.recv(1016))
+    if(packet2 is not None and packet.streamID == packet2.streamID and packet2.flags == 3):
+        packet = Packet(packet2.streamID, packet2.SYNNumber, packet2.ACKNumber, False, True, False, args.window, 0, "")
+        sock.sendto(packet.getPacket(), (destination_ip, destination_port))
+        sock.close()
+        return True
+    else:
+        return False
+
+def termination():
+    # Step 1
+    packet = fromRecv(sock.recv(1016))
+    if (packet is not None and packet.flags == 1):
+        # Step 2
+        packet2 = Packet(packet.streamID, packet.SYNNumber, packet.ACKNumber, False, True, True, args.window, 0, "")
+        sock.sendto(packet2.getPacket(), (destination_ip, destination_port))
+
+        # Step 3
+        packet = fromRecv(sock.recv(1016))
+        if (packet is not None and packet2.streamID == packet.streamID and packet2.SYNNumber == packet.SYNNumber and packet2.ACKNumber == packet.ACKNumber and packet.flags == 2):
+            sock.close()
+            print("Termination completed")
+            return True
+        else:
+            return False
+    else:
+        return False
+
+handshake(random.getrandbits(32))
+#termination_client(random.getrandbits(32), 0, 0)
+termination()
