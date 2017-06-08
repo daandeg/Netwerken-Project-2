@@ -1,6 +1,5 @@
 import binascii
-import uuid
-from struct import pack, unpack, unpack_from
+from struct import pack, unpack_from
 
 
 def fromRecv(byteString):

@@ -1,6 +1,10 @@
-from bTCP_client import *
-from bTCP_server import *
-import _thread
+def split(string, index):
+    s1 = string[:index]
+    s2 = string[index:]
+    return s1, s2
 
-_thread.start_new_thread(shandshake, ())
-_thread.start_new_thread(chandshake, ())
+a = list(range(1, 100))
+a = []
+if a == []:
+    print("hoi")
+
