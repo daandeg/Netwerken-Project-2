@@ -1,12 +1,17 @@
 #!/usr/local/bin/python3
-import argparse
 import random
 import socket
 
 from File import *
 from Packet import *
 
+"""
+Implementation of a basic TCP client
+"""
 class bTCPClient:
+    """"
+    Initialization
+    """
     def __init__(self, window, timeout, path, server, client):
         self.window = window
         self.timeout = timeout
@@ -20,6 +25,9 @@ class bTCPClient:
         self.ackNumber = 0
         self.file = None
 
+    """"
+    Connecting the client to the server by performing a 3-way handshake
+    """
     def connect(self):
         self.sock.bind(self.client)
         self.sock.settimeout(self.timeout)
@@ -31,6 +39,9 @@ class bTCPClient:
             except socket.timeout:
                 pass
 
+    """"
+    Disconnecting the client from the server by performing a 4-way termination
+    """
     def disconnect(self):
         while self.connected:
             try:
@@ -38,6 +49,9 @@ class bTCPClient:
             except socket.timeout:
                 pass
 
+    """"
+    Perform the 3-way handshake with the server
+    """
     def handshake(self):
         # Step 1
         payload = ""
@@ -60,6 +74,9 @@ class bTCPClient:
         else:
             return False
 
+    """"
+    Initiate termination to server
+    """
     def termination_in(self):
         # Step 1
         payload = ""
@@ -79,6 +96,9 @@ class bTCPClient:
         else:
             return True
 
+    """"
+    React to termination from server
+    """
     def termination_re(self):
         # Step 2:
         payload = ""
@@ -93,6 +113,9 @@ class bTCPClient:
         else:
             return True
 
+    """"
+    Send file to server
+    """
     def send(self):
         self.file = File(self.path)
         self.file.readFile()
@@ -100,8 +123,9 @@ class bTCPClient:
 
         while len(packets) > 0:
             initSyn = self.synNumber
-            length = list(range(0, min(self.window, len(packets))))
+            length = list(range(0, min(self.window, len(packets)))) # indices of the packets with a maximum of the windowsize
             l = len(length)
+            # while there are still packets that are not acknowledged
             while len(length) > 0:
                 # Send packets
                 for i in length:
@@ -124,6 +148,7 @@ class bTCPClient:
                         # Else check if ACK is coming in
                         elif packet is not None and packet.streamID == self.streamID and packet.flags == 2:
                             try:
+                                # Remove the index from the packets that have to be checked
                                 length.remove(j)
                                 self.ackNumber = packet.ACKNumber
                             except ValueError:
@@ -132,17 +157,3 @@ class bTCPClient:
                         pass
             packets = packets[l:]
             self.synNumber += l
-
-parser = argparse.ArgumentParser()
-parser.add_argument("-w", "--window", help="Define bTCP window size", type=int, default=100)
-parser.add_argument("-t", "--timeout", help="Define bTCP timeout in milliseconds", type=int, default=100)
-parser.add_argument("-i", "--input", help="File to send", default="tmp.file")
-args = parser.parse_args()
-
-addr_server = ("127.0.0.1", 9001)
-addr_client = ("127.0.0.1", 9002)
-
-client = bTCPClient(args.window, args.timeout, "Input/test.txt", addr_server, addr_client)
-client.connect()
-client.send()
-client.disconnect()

@@ -1,6 +1,9 @@
 import binascii
 from struct import pack, unpack_from
 
+""""
+Convert a given byteString to a packet
+"""
 def fromRecv(byteString):
     header = byteString[0:16]
     streamID, = unpack_from("I", header)
@@ -23,8 +26,13 @@ def fromRecv(byteString):
         FINflag = True
     return Packet(streamID, SYNNumber, ACKNumber, SYNflag, ACKflag, FINflag, window, dataLength, payload)
 
+""""
+Implementation of a packet
+"""
 class Packet:
-
+    """"
+    Initialization
+    """
     def __init__(self, streamID, SYNNumber, ACKNumber, SYNflag, ACKflag, FINflag, window, dataLength, payload):
         self.streamID = streamID
         self.SYNNumber = SYNNumber
@@ -43,8 +51,14 @@ class Packet:
         packet = header + payload.encode("utf-8")
         self.checksum = binascii.crc32(packet)
 
+    """"
+    Create the header of the packet
+    """
     def createHeader(self, checksum):
         return pack("IHHBBHI", self.streamID, self.SYNNumber, self.ACKNumber, self.flags, self.window, self.dataLength, checksum)
 
+    """"
+    Returns the packet
+    """
     def getPacket(self):
         return self.createHeader(self.checksum) + self.payload.encode("utf-8")
