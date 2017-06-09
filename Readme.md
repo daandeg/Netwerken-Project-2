@@ -63,7 +63,7 @@ We see that if a packet is not acknowledged, it is sent again by the client. Thi
 
 Another problem might be that the order of the packets might be shuffled. We fix this by letting the server save the payload of the packet in a tuple with the SYN-number. Then, in the end, we can order them by SYN-number, resulting in the right order of the payloads and thus in the right message.
 
-![alt text](images/send file.png "flow-state machine for sending a file")
+![alt text](images/send_file.png "flow-state machine for sending a file")
 
 ## Terminating the connection
 
