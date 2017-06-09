@@ -1,11 +1,16 @@
 #!/usr/local/bin/python3
 import socket
-import argparse
 
 from File import File
 from Packet import *
 
+""""
+Implementation of a basic TCP server
+"""
 class bTCPServer:
+    """"
+    Initialization
+    """
     def __init__(self, window, timeout, path, server):
         self.window = window
         self.timeout = timeout
@@ -17,6 +22,9 @@ class bTCPServer:
         self.terminate = False
         self.file = None
 
+    """"
+    Performing the 3-way handshake with the client
+    """
     def handshake(self):
         #Step 1
         data, addr = self.sock.recvfrom(1016)
@@ -46,6 +54,9 @@ class bTCPServer:
             print("failed step 2")
             return False, 0, 0, 0, None
 
+    """"
+    React to termination from the client
+    """
     def termination_re(self, streamID, synNumber, ackNumber, client):
         #Step 2:
         payload = ""
@@ -60,6 +71,9 @@ class bTCPServer:
         else:
             return True
 
+    """"
+    Initiate termination to the client
+    """
     def termination_in(self, streamID, synNumber, ackNumber, client):
         #Step 1:
         payload = ""
@@ -76,6 +90,11 @@ class bTCPServer:
         else:
             return True
 
+    """"
+    Receive message from the client. This is done by first performing the handshake,
+    then receiving the message and finally terminating by either initiate it serverside
+    or clientside
+    """
     def receive(self):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(self.server)
@@ -83,18 +102,21 @@ class bTCPServer:
         ackNumber = 0
         packets = []
 
+        # Perform handshake until connected
         while not self.connected:
             try:
                 self.connected, streamID, synNumber, ackNumber, client = self.handshake()
             except socket.timeout:
                 pass
 
+        # Receive packets
         while self.connected and not self.terminate:
             try:
                 data, addr = self.sock.recvfrom(1016)
                 packet = fromRecv(data)
                 if packet is not None and addr == client and packet.streamID == streamID:
                     ackNumber = packet.SYNNumber
+                    # If a FIN packet is received: react to termination
                     if packet.flags == 1:
                         while self.connected:
                             self.writePackets(list(set(packets)))
@@ -103,6 +125,7 @@ class bTCPServer:
                                 return
                             except socket.timeout:
                                 pass
+                    # Else if ACK packet is received, acknowledge
                     elif packet.flags == 4:
                         packets.append((packet.SYNNumber, packet.payload))
                         synNumber = packet.SYNNumber
@@ -114,19 +137,27 @@ class bTCPServer:
 
         synNumber += 1
         ackNumber = synNumber
+        # Initiate termination if asked for
         while self.connected and self.terminate:
             try:
                 self.connected = self.termination_in(streamID, synNumber, ackNumber, client)
+                self.writePackets(list(set(packets)))
             except socket.timeout:
                 pass
         self.sock.close()
 
+    """"
+    Writing the received packets to the output file
+    """
     def writePackets(self, packets):
-        packets = sorted(packets, key = lambda tup: tup[0])
+        packets = sorted(packets, key = lambda tup: tup[0]) # Sort by synNumber
         packets = [i[1] for i in packets]
         self.file = File(self.path)
         self.file.fromPackets(packets)
         self.file.writeFile()
 
+    """"
+    Let the server initiate termination
+    """
     def orderTermination(self):
         self.terminate = True
