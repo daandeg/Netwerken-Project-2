@@ -63,6 +63,8 @@ We see that if a packet is not acknowledged, it is sent again by the client. Thi
 
 Another problem might be that the order of the packets might be shuffled. We fix this by letting the server save the payload of the packet in a tuple with the SYN-number. Then, in the end, we can order them by SYN-number, resulting in the right order of the payloads and thus in the right message.
 
+![alt text](images/send file.png "flow-state machine for sending a file")
+
 ## Terminating the connection
 
 Termination can be initiated by either the client side or the server side. The process is as follows:
@@ -72,6 +74,8 @@ Termination can be initiated by either the client side or the server side. The p
 4. The reactor receives this FIN-ACK packet and he closes its connection
 
 At this point in time, we assume that the client has sent all the packets of the file to the server, and thus at this point the server writes the packets to the file.
+
+![alt text](images/termination.png "flow-state machine for termination")
 
 ## Flags
 
