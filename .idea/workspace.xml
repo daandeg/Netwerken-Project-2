@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b77c10c9-3f69-4364-bca4-6a0994376291" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Main.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/File.py" afterPath="$PROJECT_DIR$/File.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Packet.py" afterPath="$PROJECT_DIR$/Packet.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bTCP_client.py" afterPath="$PROJECT_DIR$/bTCP_client.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bTCP_server.py" afterPath="$PROJECT_DIR$/bTCP_server.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Readme.md" afterPath="$PROJECT_DIR$/Readme.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,7 +14,7 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="bTCP_client.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="bTCP_client.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bTCP_client.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-83">
@@ -41,10 +36,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="testframework.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="testframework.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/testframework.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-374">
+            <state relative-caret-position="340">
               <caret line="20" column="59" lean-forward="false" selection-start-line="20" selection-start-column="47" selection-end-line="20" selection-end-column="59" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
@@ -357,9 +352,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Unittests_in_testframework_py - 2017.06.09 at 15h 38m 57s.xml">
-      <configuration name="Unittests in testframework.py" configurationId="tests" />
-    </history-entry>
     <history-entry file="Unittests_in_testframework_py - 2017.06.09 at 15h 47m 56s.xml">
       <configuration name="Unittests in testframework.py" configurationId="tests" />
     </history-entry>
@@ -387,6 +379,9 @@
     <history-entry file="Unittests_in_testframework_py - 2017.06.09 at 17h 19m 49s.xml">
       <configuration name="Unittests in testframework.py" configurationId="tests" />
     </history-entry>
+    <history-entry file="Unittests_in_testframework_py - 2017.06.09 at 18h 53m 58s.xml">
+      <configuration name="Unittests in testframework.py" configurationId="tests" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="377" width="1296" height="1000" extended-state="6" />
@@ -394,10 +389,10 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.228125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16741572" sideWeight="0.12734374" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27865168" sideWeight="0.12734374" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16741572" sideWeight="0.8726562" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27865168" sideWeight="0.8726562" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -686,16 +681,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/testframework.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-374">
-          <caret line="20" column="59" lean-forward="false" selection-start-line="20" selection-start-column="47" selection-end-line="20" selection-end-column="59" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -738,6 +723,16 @@
           <caret line="116" column="13" lean-forward="false" selection-start-line="116" selection-start-column="13" selection-end-line="116" selection-end-column="13" />
           <folding>
             <element signature="e#25#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testframework.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="59" lean-forward="false" selection-start-line="20" selection-start-column="47" selection-end-line="20" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>

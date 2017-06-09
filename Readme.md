@@ -1,5 +1,8 @@
 # Project 2 Framework
 
+Daan de Groot - s4614623
+Bart Gruppen - s4465784
+
 ## Description
 
 This directory contains a framework for a basic form of TCP over UDP. This effectively provides a file transfer client-server combination. This is done by implementing a 3-way handshake, a file tranfer respecting reliability and flow control and termination.
