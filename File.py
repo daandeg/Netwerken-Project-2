@@ -2,7 +2,7 @@
 class File:
     def __init__(self, path):
         self.path = path
-        self.content = None
+        self.content = ""
         self.MAX_DATA_LENGTH = 1000
 
     def readFile(self):

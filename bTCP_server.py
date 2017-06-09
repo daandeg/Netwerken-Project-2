@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3
 import socket
+import argparse
 
 from File import File
 from Packet import *
@@ -94,7 +95,7 @@ class bTCPServer:
                     ackNumber = packet.SYNNumber
                     if packet.flags == 1:
                         while self.connected:
-                            self.writePackets(packets)
+                            self.writePackets(list(set(packets)))
                             try:
                                 self.connected = self.termination_re(streamID, synNumber, ackNumber, client)
                                 return
@@ -121,8 +122,16 @@ class bTCPServer:
     def writePackets(self, packets):
         packets = sorted(packets, key = lambda tup: tup[0])
         packets = [i[1] for i in packets]
-        file = File(self.path).fromPackets(packets)
+        file = File(self.path)
+        file.fromPackets(packets)
         file.writeFile()
 
-s = bTCPServer(100, 100, "/Output/", ("127.0.0.1", 9001))
-s.receive()
+parser = argparse.ArgumentParser()
+parser.add_argument("-w", "--window", help="Define bTCP window size", type=int, default=100)
+parser.add_argument("-t", "--timeout", help="Define bTCP timeout in milliseconds", type=int, default=100)
+parser.add_argument("-i", "--input", help="File to send", default="tmp.file")
+args = parser.parse_args()
+
+addr_server = ("127.0.0.1", 9001)
+server = bTCPServer(args.window, args.timeout, "Output/test.txt", addr_server)
+server.receive()
