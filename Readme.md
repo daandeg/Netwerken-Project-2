@@ -47,6 +47,8 @@ the 3-way handshake establishes the connection between the client and the server
 3. The client responds with an ACK packet, where the SYN-number is set to the ACK-number of the servers packet
 Since the server sends one packet to the client, the client learns about the window size that the server allows for, which is needed to guarantee flow control.
 
+![alt text](images/handshake.png "flow-state machine for the handshake")
+
 ## Transferring a file
 
 For transferring a file the following procedure is followed:
