@@ -1,19 +1,20 @@
-import argparse
+import unittest
 
-from bTCP_client import *
-from bTCP_server import *
+class TestStringMethods(unittest.TestCase):
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-w", "--window", help="Define bTCP window size", type=int, default=100)
-parser.add_argument("-t", "--timeout", help="Define bTCP timeout in milliseconds", type=int, default=100)
-parser.add_argument("-i", "--input", help="File to send", default="tmp.file")
-args = parser.parse_args()
+    def test_upper(self):
+        self.assertEqual('foo'.upper(), 'FOO')
 
-addr_server = ("127.0.0.1", 9001)
-addr_client = ("127.0.0.1", 9002)
-server = bTCPServer(args.window, args.timeout, "Output/test.txt", addr_server)
-client = bTCPClient(args.window, args.timeout, "Input/test.txt", addr_server, addr_client)
+    def test_isupper(self):
+        self.assertTrue('FOO'.isupper())
+        self.assertFalse('Foo'.isupper())
 
-server.receive()
-client.connect()
-client.send()
+    def test_split(self):
+        s = 'hello world'
+        self.assertEqual(s.split(), ['hello', 'world'])
+        # check that s.split fails when the separator is not a string
+        with self.assertRaises(TypeError):
+            s.split(2)
+
+if __name__ == '__main__':
+    unittest.main()

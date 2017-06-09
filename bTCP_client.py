@@ -18,6 +18,7 @@ class bTCPClient:
         self.streamID = 0   # initialized later
         self.synNumber = 0
         self.ackNumber = 0
+        self.file = None
 
     def connect(self):
         self.sock.bind(self.client)
@@ -93,9 +94,9 @@ class bTCPClient:
             return True
 
     def send(self):
-        file = File(self.path)
-        file.readFile()
-        packets = file.toPackets()
+        self.file = File(self.path)
+        self.file.readFile()
+        packets = self.file.toPackets()
 
         while len(packets) > 0:
             initSyn = self.synNumber
