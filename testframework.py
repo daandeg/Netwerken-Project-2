@@ -1,7 +1,8 @@
 import unittest
-import socket
-import time
 import sys
+
+from bTCP_server import *
+from bTCP_client import *
 
 timeout=100
 winsize=100
@@ -41,20 +42,24 @@ def run_command(command,cwd=None, shell=True):
 
     if process.returncode:
         print("2. problem running command : \n   ", str(command), " ", process.returncode)
-        
 
 
-        
 class TestbTCPFramework(unittest.TestCase):
     """Test cases for bTCP"""
     
     def setUp(self):
+        print("hoi")
         """Prepare for testing"""
+        self.input = "Input/test.txt"
+        self.output = "Output/test.txt"
+        self.addr_server = ("127.0.0.1", 9001)
+        self.addr_client = ("127.0.0.1", 9002)
         # default netem rule (does nothing)
         run_command(netem_add)
         
         # launch localhost server
-        
+        self.server = bTCPServer(winsize, timeout, self.output, self.addr_server)
+        self.server.start()
 
     def tearDown(self):
         """Clean up after testing"""
@@ -62,19 +67,29 @@ class TestbTCPFramework(unittest.TestCase):
         run_command(netem_del)
         
         # close server
+        self.server.orderTermination()
 
     def test_ideal_network(self):
         """reliability over an ideal framework"""
+        print("hoi")
         # setup environment (nothing to set)
 
         # launch localhost client connecting to server
-        
+        client = bTCPClient(winsize, timeout, self.input, self.addr_server, self.addr_client)
+        client.connect()
+
         # client sends content to server
-        
+        client.send()
+
         # server receives content from client
-        
+
+        # client disconnects
+        client.disconnect()
+
         # content received by server matches the content sent by client
-    
+        self.assertTrue(self.server.file.compareTo(self.client.file))
+
+
     def test_flipping_network(self):
         """reliability over network with bit flips 
         (which sometimes results in lower layer packet loss)"""
@@ -82,79 +97,121 @@ class TestbTCPFramework(unittest.TestCase):
         run_command(netem_change.format("corrupt 1%"))
         
         # launch localhost client connecting to server
-        
+        client = bTCPClient(winsize, timeout, self.input, self.addr_server, self.addr_client)
+        client.connect()
+
         # client sends content to server
-        
+        client.send()
+
         # server receives content from client
+
+        # client disconnects
+        client.disconnect()
         
         # content received by server matches the content sent by client
+        self.assertTrue(self.server.file.compareTo(self.client.file))
 
     def test_duplicates_network(self):
         """reliability over network with duplicate packets"""
         # setup environment
         run_command(netem_change.format("duplicate 10%"))
-        
+
         # launch localhost client connecting to server
-        
+        client = bTCPClient(winsize, timeout, self.input, self.addr_server, self.addr_client)
+        client.connect()
+
         # client sends content to server
-        
+        client.send()
+
         # server receives content from client
-        
+
+        # client disconnects
+        client.disconnect()
+
         # content received by server matches the content sent by client
+        self.assertTrue(self.server.file.compareTo(self.client.file))
 
     def test_lossy_network(self):
         """reliability over network with packet loss"""
         # setup environment
         run_command(netem_change.format("loss 10% 25%"))
-        
+
         # launch localhost client connecting to server
-        
+        client = bTCPClient(winsize, timeout, self.input, self.addr_server, self.addr_client)
+        client.connect()
+
         # client sends content to server
-        
+        client.send()
+
         # server receives content from client
-        
+
+        # client disconnects
+        client.disconnect()
+
         # content received by server matches the content sent by client
+        self.assertTrue(self.server.file.compareTo(self.client.file))
 
 
     def test_reordering_network(self):
         """reliability over network with packet reordering"""
         # setup environment
         run_command(netem_change.format("delay 20ms reorder 25% 50%"))
-        
+
         # launch localhost client connecting to server
-        
+        client = bTCPClient(winsize, timeout, self.input, self.addr_server, self.addr_client)
+        client.connect()
+
         # client sends content to server
-        
+        client.send()
+
         # server receives content from client
-        
+
+        # client disconnects
+        client.disconnect()
+
         # content received by server matches the content sent by client
+        self.assertTrue(self.server.file.compareTo(self.client.file))
         
     def test_delayed_network(self):
         """reliability over network with delay relative to the timeout value"""
         # setup environment
         run_command(netem_change.format("delay "+str(timeout)+"ms 20ms"))
-        
+
         # launch localhost client connecting to server
-        
+        client = bTCPClient(winsize, timeout, self.input, self.addr_server, self.addr_client)
+        client.connect()
+
         # client sends content to server
-        
+        client.send()
+
         # server receives content from client
-        
+
+        # client disconnects
+        client.disconnect()
+
         # content received by server matches the content sent by client
+        self.assertTrue(self.server.file.compareTo(self.client.file))
     
     def test_allbad_network(self):
         """reliability over network with all of the above problems"""
 
         # setup environment
         run_command(netem_change.format("corrupt 1% duplicate 10% loss 10% 25% delay 20ms reorder 25% 50%"))
-        
+
         # launch localhost client connecting to server
-        
+        client = bTCPClient(winsize, timeout, self.input, self.addr_server, self.addr_client)
+        client.connect()
+
         # client sends content to server
-        
+        client.send()
+
         # server receives content from client
-        
-        # content received by server matches the content sent by client   
+
+        # client disconnects
+        client.disconnect()
+
+        # content received by server matches the content sent by client
+        self.assertTrue(self.server.file.compareTo(self.client.file))
 
   
 #    def test_command(self):

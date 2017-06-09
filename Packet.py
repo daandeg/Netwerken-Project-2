@@ -1,7 +1,6 @@
 import binascii
 from struct import pack, unpack_from
 
-
 def fromRecv(byteString):
     header = byteString[0:16]
     streamID, = unpack_from("I", header)
@@ -10,8 +9,7 @@ def fromRecv(byteString):
     flags, = unpack_from("B", header, 8)
     window, = unpack_from("B", header, 9)
     dataLength, = unpack_from("H", header, 10)
-    fmt = str(dataLength) + "s"
-    payload = str(byteString[16:])
+    payload = byteString[16:16+dataLength].decode("utf-8")
     SYNflag = False
     ACKflag = False
     FINflag = False
@@ -44,7 +42,6 @@ class Packet:
         header = self.createHeader(0)
         packet = header + payload.encode("utf-8")
         self.checksum = binascii.crc32(packet)
-
 
     def createHeader(self, checksum):
         return pack("IHHBBHI", self.streamID, self.SYNNumber, self.ACKNumber, self.flags, self.window, self.dataLength, checksum)

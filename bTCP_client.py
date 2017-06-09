@@ -1,4 +1,5 @@
 #!/usr/local/bin/python3
+import argparse
 import random
 import socket
 
@@ -17,6 +18,7 @@ class bTCPClient:
         self.streamID = 0   # initialized later
         self.synNumber = 0
         self.ackNumber = 0
+        self.file = None
 
     def connect(self):
         self.sock.bind(self.client)
@@ -92,12 +94,14 @@ class bTCPClient:
             return True
 
     def send(self):
-        file = File(self.path).readFile()
-        packets = file.toPackets()
+        self.file = File(self.path)
+        self.file.readFile()
+        packets = self.file.toPackets()
 
         while len(packets) > 0:
             initSyn = self.synNumber
             length = list(range(0, min(self.window, len(packets))))
+            l = len(length)
             while len(length) > 0:
                 # Send packets
                 for i in length:
@@ -120,14 +124,25 @@ class bTCPClient:
                         # Else check if ACK is coming in
                         elif packet is not None and packet.streamID == self.streamID and packet.flags == 2:
                             try:
-                                length.remove(packet.ACKNumber - initSyn)
+                                length.remove(j)
                                 self.ackNumber = packet.ACKNumber
                             except ValueError:
                                 pass
                     except socket.timeout:
                         pass
-            packets = packets[length:]
-            self.synNumber += length
+            packets = packets[l:]
+            self.synNumber += l
 
-s = bTCPClient(100, 100, "/Input/", ("127.0.0.1", 9001), ("127.0.0.1", 9002))
-s.connect()
+parser = argparse.ArgumentParser()
+parser.add_argument("-w", "--window", help="Define bTCP window size", type=int, default=100)
+parser.add_argument("-t", "--timeout", help="Define bTCP timeout in milliseconds", type=int, default=100)
+parser.add_argument("-i", "--input", help="File to send", default="tmp.file")
+args = parser.parse_args()
+
+addr_server = ("127.0.0.1", 9001)
+addr_client = ("127.0.0.1", 9002)
+
+client = bTCPClient(args.window, args.timeout, "Input/test.txt", addr_server, addr_client)
+client.connect()
+client.send()
+client.disconnect()

@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3
 import socket
+import argparse
 
 from File import File
 from Packet import *
@@ -13,6 +14,8 @@ class bTCPServer:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.settimeout(self.timeout)
         self.connected = False
+        self.terminate = False
+        self.file = None
 
     def handshake(self):
         #Step 1
@@ -73,7 +76,7 @@ class bTCPServer:
         else:
             return True
 
-    def receive(self):
+    def run(self):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(self.server)
         synNumber = 0
@@ -86,7 +89,7 @@ class bTCPServer:
             except socket.timeout:
                 pass
 
-        while self.connected:
+        while self.connected and not self.terminate:
             try:
                 data, addr = self.sock.recvfrom(1016)
                 packet = fromRecv(data)
@@ -94,7 +97,7 @@ class bTCPServer:
                     ackNumber = packet.SYNNumber
                     if packet.flags == 1:
                         while self.connected:
-                            self.writePackets(packets)
+                            self.writePackets(list(set(packets)))
                             try:
                                 self.connected = self.termination_re(streamID, synNumber, ackNumber, client)
                                 return
@@ -111,7 +114,7 @@ class bTCPServer:
 
         synNumber += 1
         ackNumber = synNumber
-        while self.connected:
+        while self.connected and self.terminate:
             try:
                 self.connected = self.termination_in(streamID, synNumber, ackNumber, client)
             except socket.timeout:
@@ -121,8 +124,19 @@ class bTCPServer:
     def writePackets(self, packets):
         packets = sorted(packets, key = lambda tup: tup[0])
         packets = [i[1] for i in packets]
-        file = File(self.path).fromPackets(packets)
-        file.writeFile()
+        self.file = File(self.path)
+        self.file.fromPackets(packets)
+        self.file.writeFile()
 
-s = bTCPServer(100, 100, "/Output/", ("127.0.0.1", 9001))
-s.receive()
+    def orderTermination(self):
+        self.terminate = True
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-w", "--window", help="Define bTCP window size", type=int, default=100)
+parser.add_argument("-t", "--timeout", help="Define bTCP timeout in milliseconds", type=int, default=100)
+parser.add_argument("-i", "--input", help="File to send", default="tmp.file")
+args = parser.parse_args()
+
+addr_server = ("127.0.0.1", 9001)
+server = bTCPServer(args.window, args.timeout, "Output/test.txt", addr_server)
+server.run()

@@ -1,8 +1,11 @@
+import filecmp
+import os
+
 
 class File:
     def __init__(self, path):
         self.path = path
-        self.content = None
+        self.content = ""
         self.MAX_DATA_LENGTH = 1000
 
     def readFile(self):
@@ -28,3 +31,9 @@ class File:
         self.content = ""
         for packet in packets:
             self.content += packet
+
+    def compareTo(self, file):
+        if os.path.isfile(self.path) and os.path.isfile(file.path):
+            return filecmp.cmp(self.path, file.path)
+        else:
+            return False
