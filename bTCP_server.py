@@ -76,7 +76,7 @@ class bTCPServer:
         else:
             return True
 
-    def run(self):
+    def receive(self):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(self.server)
         synNumber = 0
@@ -130,13 +130,3 @@ class bTCPServer:
 
     def orderTermination(self):
         self.terminate = True
-
-parser = argparse.ArgumentParser()
-parser.add_argument("-w", "--window", help="Define bTCP window size", type=int, default=100)
-parser.add_argument("-t", "--timeout", help="Define bTCP timeout in milliseconds", type=int, default=100)
-parser.add_argument("-i", "--input", help="File to send", default="tmp.file")
-args = parser.parse_args()
-
-addr_server = ("127.0.0.1", 9001)
-server = bTCPServer(args.window, args.timeout, "Output/test.txt", addr_server)
-server.run()

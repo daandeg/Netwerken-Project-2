@@ -28,27 +28,29 @@ def run_command_with_output(cmdstr, input=None, cwd=None, shell=True):
 
     return stdoutdata
 
-"""run command with no output piping"""
-def run_command(command,cwd=None, shell=True):
+"""runs command, waiting by default for the process to end (configured by blocking).
+You should enable blocking when running netem commands otherwise they could be executed in an different order than given. 
+Conversely, you should disable blocking if launching a server or any blocking other application. """
+def run_command(command, blocking=True, cwd=None, shell=True):
     import subprocess
+    print("Running: ", command)
     process = None
     try:
         process = subprocess.Popen(command, shell=shell, cwd=cwd)
-        print(str(process))
     except Exception as inst:
         print("1. problem running command : \n   ", str(command), "\n problem : ", str(inst))
 
-    process.communicate()  # wait for the process to end
+    if blocking:
+        process.communicate()  # wait for the process to end
 
-    if process.returncode:
-        print("2. problem running command : \n   ", str(command), " ", process.returncode)
+        if process.returncode:
+            print("2. problem running command : \n   ", str(command), " ", process.returncode)
 
 
 class TestbTCPFramework(unittest.TestCase):
     """Test cases for bTCP"""
     
     def setUp(self):
-        print("hoi")
         """Prepare for testing"""
         self.input = "Input/test.txt"
         self.output = "Output/test.txt"
@@ -59,7 +61,7 @@ class TestbTCPFramework(unittest.TestCase):
         
         # launch localhost server
         self.server = bTCPServer(winsize, timeout, self.output, self.addr_server)
-        self.server.start()
+        self.server.receive()
 
     def tearDown(self):
         """Clean up after testing"""
@@ -91,11 +93,11 @@ class TestbTCPFramework(unittest.TestCase):
 
 
     def test_flipping_network(self):
-        """reliability over network with bit flips 
+        """reliability over network with bit flips
         (which sometimes results in lower layer packet loss)"""
         # setup environment
         run_command(netem_change.format("corrupt 1%"))
-        
+
         # launch localhost client connecting to server
         client = bTCPClient(winsize, timeout, self.input, self.addr_server, self.addr_client)
         client.connect()
@@ -107,7 +109,7 @@ class TestbTCPFramework(unittest.TestCase):
 
         # client disconnects
         client.disconnect()
-        
+
         # content received by server matches the content sent by client
         self.assertTrue(self.server.file.compareTo(self.client.file))
 
@@ -171,7 +173,7 @@ class TestbTCPFramework(unittest.TestCase):
 
         # content received by server matches the content sent by client
         self.assertTrue(self.server.file.compareTo(self.client.file))
-        
+
     def test_delayed_network(self):
         """reliability over network with delay relative to the timeout value"""
         # setup environment
@@ -191,7 +193,7 @@ class TestbTCPFramework(unittest.TestCase):
 
         # content received by server matches the content sent by client
         self.assertTrue(self.server.file.compareTo(self.client.file))
-    
+
     def test_allbad_network(self):
         """reliability over network with all of the above problems"""
 
@@ -212,13 +214,6 @@ class TestbTCPFramework(unittest.TestCase):
 
         # content received by server matches the content sent by client
         self.assertTrue(self.server.file.compareTo(self.client.file))
-
-  
-#    def test_command(self):
-#        #command=['dir','.']
-#        out = run_command_with_output("dir .")
-#        print(out)
-        
 
 if __name__ == "__main__":
     # Parse command line arguments
